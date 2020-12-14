@@ -1,0 +1,5 @@
+pkgs: 
+  - httpd
+  - php
+  - mariadb-server
+  - mariadb

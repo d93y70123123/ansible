@@ -1,0 +1,38 @@
+---
+  - name: install vsftpd to website group
+    hosts: website
+    tasks:
+      - name: install vsftpd packages
+        yum:
+          name: vsftpd
+          state: latest
+
+      - name: start and enable FTP service
+        service:
+          name: vsftpd
+          enabled: true
+          state: started
+
+      - name: add FTP port to firewalld
+        firewalld:
+#          port: 21/tcp
+          service: ftp
+          state: enabled
+          permanent: true
+          immediate: true
+
+      - name: create readme.txt for myuser1 home directory
+        copy:
+          content: 'This FTP daemon setted by Ansible'
+          dest: /home/myuser1/readme.txt
+          owner: myuser1
+          group: myuser1
+      
+  - name: get FTP content
+    hosts: localhost
+    become: false
+    tasks:
+      - name: get_url ftp:webserver1/readme.txt
+        get_url:
+          url: ftp://myuser1:itismyuser@webserver1/readme.txt
+          dest: /dev/shm/checkftp.txt

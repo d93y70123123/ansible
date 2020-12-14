@@ -1,0 +1,46 @@
+---
+  - name: add service to hosts
+    hosts: webserver1
+    vars:
+      content: kai \n G080A002 \n
+
+    tasks:
+      - name: install apach php https package
+        yum:
+          name: "{{ ansible_facts['ansible_local']['myweb']['web']['pkg'] }}"
+          state: latest
+
+      - name: set service of httpd start and enable
+        service:
+          name: "{{ ansible_facts['ansible_local']['myweb']['web']['srv'] }}"
+          enabled: "{{ ansible_facts['ansible_local']['myweb']['web']['enabled'] }}"
+          state: "{{ ansible_facts['ansible_local']['myweb']['web']['state'] }}"
+
+      - name: set firewall rule enable for http
+        firewalld:
+          service: "{{ ansible_facts['ansible_local']['myweb']['web']['fire_srv'] }}"
+          permanent: yes
+          state: enabled
+
+      - name: copy var of content to webserver1's /var/www/html/index.html
+        copy:
+          content: "{{ content }}"
+          dest: /var/www/html/index.html
+
+  - name: check server to client connection state
+    hosts: localhost
+    become: false
+    tasks:
+      - name:
+        uri:
+          url: http://webserver1
+          status_code: 200
+          return_content: true
+        register: output
+      - name:
+        debug:
+          #var: output
+          #var:  output.content
+          #msg: "{{ output.content }}"
+          #msg:  output
+          msg: "{{ output }}"

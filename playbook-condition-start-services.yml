@@ -1,0 +1,20 @@
+---
+  - name: restart httpd
+    hosts: webserver1
+    vars:
+      myservice:
+        - httpd
+        - named
+        - squid
+
+    tasks:
+      - name: restart httpd
+        service:
+          name: "{{ item }}"
+          state: restarted
+        loop: "{{ myservice }}"
+        register: myoutput
+      - name: show output
+        debug:
+          var: "{{ item }}"
+        loop: "{{ myoutput['result'] }}"

@@ -1,0 +1,12 @@
+# array name
+users:
+  melody:
+    firstname: melody
+    lastname: tsai
+    homedir: /home/nis/melody
+    password: $6$0l7TsCpO/nqx0HhB$kluIH8xUVJoVH7xz1BG.7tCO.2N2md5JtH4TiMNGUabN/JcIRmoBGStJRJuX6hJ7avR/gqXp8cNW9OBkzvziu.
+  amanda:
+    firstname: amanda
+    lastname: tsai
+    homedir: /home/nis/amanda
+    password: $6$0l7TsCpO/nqx0HhB$kluIH8xUVJoVH7xz1BG.7tCO.2N2md5JtH4TiMNGUabN/JcIRmoBGStJRJuX6hJ7avR/gqXp8cNW9OBkzvziu.

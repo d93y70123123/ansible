@@ -1,0 +1,15 @@
+---
+  - name: remove software package
+    hosts: webserver1
+    vars_files: vars/remove_package.yml
+    tasks:
+      - name: remove http file
+        file:
+          path: /var/www/html/index.html
+          state: absent
+
+      - name: remove http, php, mariadb-server, mariadb
+        yum:
+          name: "{{ pkgs }}"
+          autoremove: yes
+          state: absent

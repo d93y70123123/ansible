@@ -1,0 +1,52 @@
+---
+  - name: add service to hosts
+    hosts: webserver1
+    vars:
+      pkgs:
+        - httpd
+        - mod_ssl
+        - php
+      service: httpd
+      fire_rule: http
+      content: kai \n G080A002 \n
+
+    tasks:
+      - name: install apach php https package
+        yum:
+          name: "{{ pkgs }}"
+          state: latest
+
+      - name: set service of httpd start and enable
+        service:
+          name: "{{ service }}"
+          enabled: true
+          state: started
+
+      - name: set firewall rule enable for http
+        firewalld:
+          service: "{{ fire_rule }}"
+          permanent: yes
+          state: enabled
+
+      - name: copy var of content to webserver1's /var/www/html/index.html
+        copy:
+          content: "{{ content }}"
+          dest: /var/www/html/index.html
+
+  - name: check server to client connection state
+    hosts: localhost
+    become: false
+    tasks:
+      - name:
+        uri:
+          url: http://webserver1
+          status_code: 200
+          return_content: true
+        register: output
+      - name:
+        debug:
+          #var: output
+          #var:  output.content
+          #msg: "{{ output.content }}"
+          #msg:  output
+          msg: "{{ output }}"

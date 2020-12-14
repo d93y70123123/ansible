@@ -1,0 +1,8 @@
+---
+  - name: add "{{ username }}" at "{{ hostname }}"
+    hosts: "{{ hostname }}"
+    tasks:
+      - name: add username "{{ username }}"
+        user:
+          user: "{{ username }}"
+          password: 

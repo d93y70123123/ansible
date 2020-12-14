@@ -1,0 +1,10 @@
+---
+  - name: add user for managed hosts
+    hosts: webserver1
+    vars_files: vars/username.yml
+    tasks:
+    - name: use user module to create user "{{username}}"
+      user:
+        name: "{{ username }}"
+        uid: "{{uid}}"
+        password: "{{password}}"
