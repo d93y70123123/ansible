@@ -1,0 +1,55 @@
+---
+  - name: block and handler test
+    hosts: webserver1
+    tasks:
+      - name: check HW and OS system
+        fail: 
+          msg: this linux distribution not CentOS
+        when: |
+          ansible_facts['memtotal_mb'] <= 1024 or
+          ansible_facts['distribution'] != 'CentOS'
+
+      - name: Install web pksg
+        yum:
+          name: 
+          - httpd
+          - mod_ssl
+          - php
+          state: present
+      
+      - name: start and enable httpd
+        service:
+          name: httpd
+          state: started
+          enabled: true
+
+      - name: upload config file
+        block:
+          - name: copy check.conf to webserver /etc/httpd/conf.d/
+            copy:
+              src: ./check.conf
+              dest: /etc/httpd/conf.d/check.conf
+            notify: 
+              - restart httpd
+            register: myoutput
+
+        rescue:
+          - name: if action fail then show debug message
+            debug :
+              msg: "{{ myoutput }}"
+
+      - name: modify firewall
+        firewalld:
+          service: "{{ item }}"
+          permanent: true
+          state: enabled
+        loop:
+          - http
+          - https
+
+    handlers:
+      - name: restart httpd
+        service:
+          name: httpd
+          state: started
+        
