@@ -1,0 +1,29 @@
+---
+  - name: restart httpd when configure changed
+    hosts: webserver1
+    tasks: 
+      - name: install httpd
+        yum:
+          name: "{{ item }}"
+          state: present
+        loop:
+          - httpd
+          - mariadb-server
+      
+      - name: upload configure file
+        copy:
+          src: check.conf
+          dest: /etc/httpd/conf.d/check.conf
+
+        notify:
+          - restart httpd
+    
+    handlers:
+      - name: restart httpd
+        service:
+          name: "{{ item }}"
+          state: restarted
+        loop:
+          - httpd
+          - mariadb
+
