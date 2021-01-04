@@ -1,0 +1,37 @@
+---
+  - name: install docker with ansible
+    hosts: webserver1
+    force_handlers: true
+    tasks:
+    - name: upload docker repository
+      copy:
+        src: /etc/yum.repos.d/docker-ce.repo
+        dest: /etc/yum.repos.d/
+        mode: 0644
+
+    - name: yum install docker
+      yum:
+        name: 
+        - docker-ce
+        - docker-ce-cli
+        - containerd.io
+        state: present
+      notify:
+        - remove runc
+
+    - name: upload /etc/docker/daemon.json
+      copy: 
+        src: /etc/docker/daemon.json
+        dest: /etc/docker/
+
+    - name: start and enable docker
+      service:
+        name: docker
+        state: restarted
+        enabled: true
+  
+    handlers:
+      - name: remove runc
+        yum:
+          name: runc
+          state: absent
